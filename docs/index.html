@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>geohash-kit demo: Central Park</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+ body { margin: 0; font-family: sans-serif; }
+ header { padding: 8px 12px; }
+ #map { height: calc(100vh - 80px); }
+</style>
+</head>
+<body>
+<header>
+ <strong>geohash-kit: Central Park covered with precision-6 geohashes</strong><br>
+ Each box is a geohash cell touching a simplified outline of Central Park, New York City.
+ <a href="https://github.com/AmmarYasser455/geohash-kit">Source repository</a>
+</header>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+ const map = L.map('map');
+ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+   maxZoom: 19,
+   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+ }).addTo(map);
+ fetch('demo.geojson').then(r => r.json()).then(data => {
+   const layer = L.geoJSON(data, {
+     style: { color: '#c0392b', weight: 1, fillOpacity: 0.15 },
+     onEachFeature: (f, l) => l.bindPopup(f.properties.geohash + ' (' + f.properties.area_km2 + ' km²)')
+   }).addTo(map);
+   map.fitBounds(layer.getBounds());
+ });
+</script>
+</body>
+</html>
