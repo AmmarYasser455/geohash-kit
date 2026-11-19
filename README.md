@@ -11,6 +11,15 @@ spatial data. `geohash-kit` gives a CLI and a Python API for the common tasks.
 - [Open in Colab](https://colab.research.google.com/github/AmmarYasser455/geohash-kit/blob/main/examples/demo.ipynb): [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/AmmarYasser455/geohash-kit/blob/main/examples/demo.ipynb)
 - [Demo map](https://ammaryasser455.github.io/geohash-kit/): Central Park covered with precision-6 cells.
 
+## Showcase
+
+Cairo Governorate (OpenStreetMap boundary) covered by precision-5 geohash cells:
+
+![Cairo covered by geohash cells](showcase/map.png)
+
+See [showcase/](showcase/README.md) for the report, the [web map](showcase/index.html),
+the [notebook](showcase/showcase.ipynb) and [map.geojson](showcase/map.geojson).
+
 ## Install
 
 ```
