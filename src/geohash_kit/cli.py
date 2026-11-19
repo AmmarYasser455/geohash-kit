@@ -20,6 +20,10 @@ def build_parser() -> argparse.ArgumentParser:
     d.add_argument("geohash")
     n = sub.add_parser("neighbours", help="list the 8 adjacent cells")
     n.add_argument("geohash")
+    pa = sub.add_parser("parent", help="print the enclosing cell one level coarser")
+    pa.add_argument("geohash")
+    ch = sub.add_parser("children", help="list the 32 cells one level finer")
+    ch.add_argument("geohash")
     c = sub.add_parser("cover", help="cover GeoJSON polygons (lon/lat) with geohashes")
     c.add_argument("path")
     c.add_argument("-p", "--precision", type=int, required=True)
@@ -43,6 +47,10 @@ def main(argv=None) -> int:
         elif args.command == "neighbours":
             for k, v in core.neighbours(args.geohash).items():
                 print(f"{k}: {v}")
+        elif args.command == "parent":
+            print(core.parent(args.geohash))
+        elif args.command == "children":
+            print("\n".join(core.children(args.geohash)))
         else:
             fc = core.cover_geojson(args.path, args.precision, args.mode)
             if args.geojson:

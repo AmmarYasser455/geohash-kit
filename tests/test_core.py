@@ -100,3 +100,27 @@ def test_cli_decode_keeps_full_precision(capsys, geohash):
     w, s, e, n = bbox
     assert w < e and s < n
     assert s < lat < n and w < lon < e
+
+
+def test_parent_children_hierarchy(capsys):
+    import geohash_kit as gk
+
+    kids = gk.children("ezs4")
+    assert len(kids) == 32 and kids[2] == "ezs42"
+    assert all(gk.parent(k) == "ezs4" for k in kids)
+    # children lie inside the parent's bounds (lon/lat order)
+    w, s, e, n = decode_bbox("ezs4")
+    for k in kids:
+        kw, ks, ke, kn = decode_bbox(k)
+        assert w <= kw and s <= ks and ke <= e and kn <= n
+    assert gk.parent("EZS42") == "ezs4"
+    for bad in ("e", "", "a1"):
+        with pytest.raises(ValueError):
+            gk.parent(bad)
+    with pytest.raises(ValueError):
+        gk.children("u4pruydqqvjk")
+    assert main(["parent", "ezs42"]) == 0
+    assert capsys.readouterr().out == "ezs4\n"
+    assert main(["children", "ezs4"]) == 0
+    assert capsys.readouterr().out.split()[:3] == ["ezs40", "ezs41", "ezs42"]
+    assert main(["children", "!"]) == 1

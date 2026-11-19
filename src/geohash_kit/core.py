@@ -106,6 +106,22 @@ def decode(geohash: str) -> tuple[float, float]:
     return (s + n) / 2, (w + e) / 2
 
 
+def parent(geohash: str) -> str:
+    """Return the enclosing cell one precision level coarser."""
+    decode_bbox(geohash)  # validates
+    if len(geohash) == 1:
+        raise ValueError("a precision-1 geohash has no parent")
+    return geohash[:-1].lower()
+
+
+def children(geohash: str) -> list[str]:
+    """Return the 32 cells one precision level finer, in base-32 order."""
+    decode_bbox(geohash)  # validates
+    if len(geohash) >= MAX_PRECISION:
+        raise ValueError(f"a precision-{MAX_PRECISION} geohash has no children")
+    return [geohash.lower() + c for c in BASE32]
+
+
 def neighbours(geohash: str) -> dict[str, str]:
     """Return the adjacent cells keyed n, ne, e, se, s, sw, w, nw.
 
