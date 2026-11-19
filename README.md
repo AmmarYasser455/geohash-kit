@@ -48,6 +48,14 @@ sw: ezefp
 w: ezefr
 nw: ezefx
 
+$ geohash-kit parent ezs42
+ezs4
+
+$ geohash-kit children ezs4 | head -3
+ezs40
+ezs41
+ezs42
+
 $ geohash-kit cover examples/central_park.geojson -p 5
 dr5ru
 dr72h
@@ -74,6 +82,8 @@ gk.encode(57.64911, 10.40744, 11)      # 'u4pruydqqvj'
 gk.decode("ezs42")                     # (42.60498..., -5.60302...)  (lat, lon)
 gk.decode_bbox("ezs42")                # (min_lon, min_lat, max_lon, max_lat)
 gk.neighbours("ezs42")["n"]            # 'ezs48'
+gk.parent("ezs42")                     # 'ezs4'
+gk.children("ezs4")[:3]                # ['ezs40', 'ezs41', 'ezs42']
 gk.cover(box(10.0, 50.0, 10.5, 50.3), 4)   # sorted list of geohashes
 gk.cell_area_km2("dr5rus")             # 0.5658797...
 gk.read_geometry("examples/central_park.geojson")  # validated shapely Polygon
@@ -93,6 +103,7 @@ for the sample data (a simplified Central Park outline).
 - `cell_area_km2` is the WGS84 ellipsoidal area of the lon/lat rectangle, computed with `pyproj.Geod`. Cells taller than 0.01 degrees (precision 1..5) use the geodesic polygon area after densifying the constant-latitude edges every 0.05 degrees of longitude; the residual error is below 0.01 % (the 32 precision-1 cells sum to the ellipsoid surface area within that tolerance). Smaller cells (precision 6..12) use the `Geod` width along the middle parallel times the `Geod` meridian height, which avoids the rounding loss of a polygon area for tiny polar cells; this approximation's relative error is below 1e-8. GeoJSON output keeps 9 significant digits.
 - Polygon cover tests cells with planar intersection in degrees (cell edges are straight lon/lat lines), not geodesic edges.
 - Invalid polygons raise an error rather than being repaired; only (Multi)Polygon is covered.
+- `parent` needs precision >= 2 and `children` precision <= 11.
 - Precision is limited to 1..12 and a cover is limited to 200,000 candidate cells.
 - At the poles, neighbours that would leave the globe are omitted.
 - The example outline is an approximation of Central Park, not an official boundary.
