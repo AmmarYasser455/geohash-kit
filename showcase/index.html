@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cairo Governorate as geohash cells</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+body { margin: 0; font-family: sans-serif; }
+header { padding: 8px 14px; }
+h1 { font-size: 1.2em; margin: 0 0 4px; }
+p { margin: 2px 0; font-size: 0.9em; }
+#map { height: calc(100vh - 110px); }
+</style>
+</head>
+<body>
+<header>
+<h1>Cairo Governorate covered by 176 precision-5 geohash cells</h1>
+<p>Each box is a geohash cell that touches the governorate boundary (red); darker cells lie mostly inside it. Click a cell for its code and area.</p>
+<p>Built with <a href="https://github.com/AmmarYasser455/geohash-kit">geohash-kit</a>. Serve over http (e.g. <code>python -m http.server</code>) so the page can fetch map.geojson.</p>
+</header>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var map = L.map('map');
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+function shade(s) { return s > 0.9 ? '#08589e' : s > 0.6 ? '#2b8cbe' : s > 0.3 ? '#7bccc4' : '#ccebc5'; }
+function style(f) {
+  if (f.properties.kind === 'boundary') {
+    return {color: '#c0392b', weight: 2.5, fill: false};
+  }
+  return {color: '#555', weight: 0.6, fillColor: shade(f.properties.share_inside), fillOpacity: 0.55};
+}
+function popup(f, layer) {
+  var rows = Object.keys(f.properties).map(function (k) {
+    return '<tr><td>' + k + '</td><td>' + f.properties[k] + '</td></tr>';
+  }).join('');
+  layer.bindPopup('<table>' + rows + '</table>');
+}
+fetch('map.geojson').then(function (r) { return r.json(); }).then(function (data) {
+  var layer = L.geoJSON(data, {style: style, onEachFeature: popup}).addTo(map);
+  map.fitBounds(layer.getBounds());
+});
+</script>
+</body>
+</html>
