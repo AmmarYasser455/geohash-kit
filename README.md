@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/brand/logo.png" alt="geohash-kit logo" width="112">
+</p>
+
 # geohash-kit
 
 Encode and decode geohashes, find a cell's neighbours, and cover a polygon with
