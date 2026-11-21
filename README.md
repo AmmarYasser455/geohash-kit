@@ -7,6 +7,8 @@
 
 # geohash-kit
 
+geohash-kit is part of [OpenTerra](https://github.com/AmmarYasser455), a family of open GIS tools.
+
 Encode and decode geohashes, find a cell's neighbours, and cover a polygon with
 geohashes at a chosen precision. Small, with two dependencies: `pyproj`
 (WGS84 ellipsoid areas) and `shapely` (geometry validity and intersection).
