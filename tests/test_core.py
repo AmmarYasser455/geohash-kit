@@ -140,3 +140,29 @@ def test_encode_real_cities_in_all_hemispheres(lat, lon, prefix):
     assert code.startswith(prefix)
     w, s, e, n = decode_bbox(code)
     assert w <= lon <= e and s <= lat <= n
+
+
+def test_neighbours_of_real_cell_around_greenwich_meridian():
+    # The Royal Observatory (51.4769 N, 0.0005 W) lies just west of the prime
+    # meridian, so its cell and its eastern neighbour meet at lon = 0.
+    h = encode(51.4769, -0.0005, 6)
+    w, s, e, n = decode_bbox(h)
+    assert w < -0.0005 < e
+    assert e == 0.0
+    east = neighbours(h)["e"]
+    ew, es, ee, en = decode_bbox(east)
+    assert ew == 0.0 and ee > 0.0
+    assert (es, en) == (s, n)
+    assert encode(51.4769, 0.0005, 6) == east
+
+
+def test_cover_around_equator_and_prime_meridian_is_complete():
+    # A box straddling (0, 0) needs cells from all four quadrants, and every
+    # returned cell must intersect the box.
+    area = box(-0.01, -0.01, 0.01, 0.01)
+    quadrants = set()
+    for h in cover(area, 5):
+        w, s, e, n = decode_bbox(h)
+        assert box(w, s, e, n).intersects(area)
+        quadrants.add(((w + e) / 2 > 0, (s + n) / 2 > 0))
+    assert len(quadrants) == 4
