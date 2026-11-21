@@ -124,3 +124,19 @@ def test_parent_children_hierarchy(capsys):
     assert main(["children", "ezs4"]) == 0
     assert capsys.readouterr().out.split()[:3] == ["ezs40", "ezs41", "ezs42"]
     assert main(["children", "!"]) == 1
+
+
+@pytest.mark.parametrize(
+    "lat, lon, prefix",
+    [
+        (-33.8688, 151.2093, "r3gx2"),   # Sydney (southern, eastern hemisphere)
+        (35.6762, 139.6503, "xn76"),     # Tokyo
+        (-34.6037, -58.3816, "69y7"),    # Buenos Aires (southern, western)
+        (51.5074, -0.1278, "gcpvj"),     # London, just west of the prime meridian
+    ],
+)
+def test_encode_real_cities_in_all_hemispheres(lat, lon, prefix):
+    code = encode(lat, lon, 7)
+    assert code.startswith(prefix)
+    w, s, e, n = decode_bbox(code)
+    assert w <= lon <= e and s <= lat <= n
